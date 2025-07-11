@@ -6,7 +6,7 @@ import { resizeCanvasToWindow } from './utils/utils.js';
 function customize(engine) {
   const player1 = new Entity(100, 100, 100, 100);
   player1.render = defaultMovementType.keyboardMovement(1);
-  player1.serialize()
+  // player1.serialize()
   engine.addEntity(player1);
 }
 try {

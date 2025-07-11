@@ -1,4 +1,4 @@
-import { Entity } from "../entities/entity";
+import { defaultMovementType, Entity } from "../entities/entity";
 import { resizeCanvasToWindow, SECONDS } from "../utils/utils";
 
 
@@ -18,6 +18,7 @@ const msgheight = 48;
  */
 
 export class Engine {
+    renderPipeline = [];
     msg = [];
     client;
     keyboard = {};
@@ -51,13 +52,20 @@ export class Engine {
         })
     }
     connectToServer() {
+        /**
+         * @param {WebSocket} client
+         */
         this.client = new WebSocket("ws://localhost:3001");
         this.client.addEventListener("open", (event) => { });
         this.client.addEventListener("close", () => {
-            this.client = new WebSocket("ws://localhost:3001");
+            setTimeout(() => {
+                this.client = new WebSocket("ws://localhost:3001");
+            }, 1000)
         });
 
         this.client.addEventListener("message", ({ data }) => {
+            this.renderPipeline = JSON.parse(data);
+            // console.log(data)
             //this tests the Messaging System
             this.createMsg(data);
         })
@@ -112,10 +120,20 @@ export class Engine {
         this.msg = this.msg.filter(x => x.timestamp > Date.now())
     }
     render() {
-        for (const e of this.entities) {
-            e.render({ engine: this });
+        if (this.keyboard[KEYBOARDKEY.W]) {
+            this.sendToServer({ id: 0, position: { x: 500, y: 500, width: 50, height: 50 } });
         }
-        // this.client.send(JSON.stringify(this.entities))
+        if (this.renderPipeline.length > 0) {
+            while (this.entities.length > 0) this.entities.pop();
+            for (
+                let item = this.renderPipeline.pop();
+                item !== undefined;
+                item = this.renderPipeline.pop()
+            ) {
+                this.entities.push(new Entity(item.id, item.position, item.side))
+            }
+            console.log(this.entities)
+        }
     }
     drawText(msg = "", x = 30, y = 30) {
         this.ctx.save()
@@ -143,6 +161,16 @@ export class Engine {
         window.engine.render();
         window.engine.draw();
     }
+    sendToServer(data) {
+        if (this.client.readyState === 0) return
+        this.client.send(JSON.stringify(data))
+    }
 }
 
 
+const KEYBOARDKEY = {
+    W: "w",
+    A: "a",
+    S: "s",
+    D: "d",
+}

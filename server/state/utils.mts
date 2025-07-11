@@ -25,3 +25,6 @@ export function checkCollison(rec1: Rectangle, rec2: Rectangle): boolean {
 
     return collision;
 }
+export function randomNum(max: number = 800, min: number = 0): number {
+    return min + (Math.random() * max);
+}

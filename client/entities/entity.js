@@ -34,19 +34,33 @@ function keyboardMovement(magnitude = 1) {
             this.position.x -= magnitude;
         if (keyboard["d"])
             this.position.x += magnitude;
+
+        engine.sendToServer(this);
     }
 }
 
 export class Entity {
     position;
     sprite;
-    constructor({ x = 50, y = 50, width = 100, height = 100, sprite }) {
-        this.position = { x, y, width, height };
-        this.sprite = sprite;
+    side;
+    id;
+
+    constructor(id, position = { x: 50, y: 50, width: 100, height: 100 }, side) {
+        this.id = id;
+        this.position = position;
+        // this.sprite = sprite;
+        this.side = side;
     };
 
     draw(ctx) {
-        drawRectangle(ctx, this.position);
+        if (this.side === 1)
+            drawRectangle(ctx, this.position, "blue");
+        if (this.side === 2)
+            drawRectangle(ctx, this.position, "red");
+        if (this.side === 3)
+            drawRectangle(ctx, this.position, "green");
+
+
     };
     render() { };
     serialize() { };
