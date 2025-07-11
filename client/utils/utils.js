@@ -19,5 +19,17 @@ export function randomNum(max = 800, min = 0) {
 
 export function drawRectangle(ctx, rec, style = "blue") {
     ctx.fillStyle = style;
-    ctx.fillRect(rec.x, rec.y, rec.y, rec.height);
+    ctx.fillRect(rec.x, rec.y, rec.width, rec.height);
+}
+export function resizeCanvasToWindow(canvas) {
+    const dpr = window.devicePixelRatio || 1;
+
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
 }

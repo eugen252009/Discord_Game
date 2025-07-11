@@ -4,17 +4,17 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   envDir: '../',
   server: {
-    allowedHosts: ["role-quantity-zus-transactions.trycloudflare.com", "localhost:5173"],
+    allowedHosts: ["sometimes-german-lesson-injuries.trycloudflare.com"],
     proxy: {
       '/api': {
-        target: 'role-quantity-zus-transactions.trycloudflare.com',
+        target: 'sometimes-german-lesson-injuries.trycloudflare.com',
         changeOrigin: true,
         secure: false,
         ws: true,
       },
     },
     hmr: {
-      clientPort: 5173,
+      clientPort: 3001,
     },
   },
 });

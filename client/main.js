@@ -1,47 +1,36 @@
 import './style.css'
 import { Engine } from "./engine/engine.js"
-import { Entity } from './entities/entity.js';
-import { randomNum } from './utils/utils.js';
+import { defaultMovementType, Entity } from './entities/entity.js';
+import { resizeCanvasToWindow } from './utils/utils.js';
+
+function customize(engine) {
+  const player1 = new Entity(100, 100, 100, 100);
+  player1.render = defaultMovementType.keyboardMovement(1);
+  player1.serialize()
+  engine.addEntity(player1);
+}
+try {
+  document.querySelector('#app').innerHTML = `<canvas id="gamecanvas" width="100%" height="100%"></canvas>`;
 
 
-document.querySelector('#app').innerHTML = `<canvas id="gamecanvas" width="100%" height="100%"></canvas>`;
-function init() {
   const canvas = document.getElementById("gamecanvas");
-  if (!canvas) return;
+  if (!canvas) throw new Error("Konnte Canavas nicht finden!");
   const ctx = canvas.getContext("2d");
-  if (!ctx) return;
+  if (!ctx) throw new Error("Konnte Context nicht abrufen. Ist das Canvas initzialisiert?");
   resizeCanvasToWindow(canvas);
-  window.engine = new Engine(canvas, ctx, canvas.clientWidth, canvas.clientHeight);
-  window.addEventListener("keydown", (event) => { window.engine.keyPressed(event.key) })
-  window.addEventListener("keyup", (event) => { window.engine.keyReleased(event.key) })
-  window.addEventListener('resize', () => resizeCanvasToWindow(window.engine.canvas));
-  window.addEventListener("mousedown", ({ x, y }) => { console.log({ x, y }) })
-  window.addEventListener("mouseup", ({ x, y }) => { console.log({ x, y }) })
-}
-function main() {
-  window.requestAnimationFrame(main);
-  window.engine.render();
-  window.engine.draw();
-}
 
-function resizeCanvasToWindow(canvas) {
-  const dpr = window.devicePixelRatio || 1;
+  let engine = new Engine(canvas, ctx, canvas.clientWidth, canvas.clientHeight);
+  window.engine = engine;
+  customize(engine);
 
-  const width = window.innerWidth;
-  const height = window.innerHeight;
 
-  canvas.width = width * dpr;
-  canvas.height = height * dpr;
 
-  canvas.style.width = width + 'px';
-  canvas.style.height = height + 'px';
+  engine.start()
+} catch (error) {
+  console.error(error);
 }
 
 
-init();
-main();
-let i = 0;
-const intervalid = setInterval(() => {
-  window.engine.addEntity(new Entity(randomNum(800), randomNum(600)))
-  if (++i > 3) clearInterval(intervalid);
-}, 1000);
+
+
+
